@@ -1,0 +1,16 @@
+syntax = "proto3";
+option go_package="pivotstudio/email";
+package emailinfo;
+message SendEmailInfo{
+  string receiveEmail=1;
+  string cc=2;
+  string title=3;
+  string content=4;
+}
+message ResponseInfo{
+  int64 statuCode=1;
+  string message=2;
+}
+service EmailService{
+  rpc SendEmail(SendEmailInfo)returns(ResponseInfo);
+}

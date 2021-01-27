@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="76b40f99-3623-4da4-9f60-b297f1f4e45e" name="school" url="http://39.105.146.221">
+        <fileTransfer rootFolder="/Xieyuschen/EmailService" accessType="SFTP" host="39.105.146.221" port="6000" sshConfigId="16ea7b74-7fd3-4c80-b6c4-88015db615d5" sshConfig="root@39.105.146.221:6000 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

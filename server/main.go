@@ -2,13 +2,12 @@ package main
 
 import (
 	"context"
+	pb "emailservice/pivotstudio/email"
 	"github.com/Pivot-Studio/Authorization-Template/pkg/ATutil"
+	"google.golang.org/grpc"
 	"gopkg.in/gomail.v2"
 	"log"
 	"net"
-
-	"google.golang.org/grpc"
-	pb "emailservice/pivotstudio/email"
 )
 
 const (
@@ -34,12 +33,13 @@ func sentEmail(email_to string,cc string, title string,content string)(err error
 	// 给谁发送，支持多个账号
 	m.SetHeader("To", email_to)
 	// 抄送谁
-	m.SetAddressHeader("Cc", cc, "Dan")
+	if len(cc)>0{
+		m.SetAddressHeader("Cc", cc, "Dan")
+	}
 	// 邮件标题
 	m.SetHeader("Subject", title)
-	// 邮件正文，支持 html
-	//这里等着前端给我写html啦
-	m.SetBody("text/html", content)
+
+	m.SetBody("text/html",content)
 	// 附件
 	//m.Attach("/home/Alex/lolcat.jpg")
 	// stmp服务，端口号，发送邮件账号，发送账号密码

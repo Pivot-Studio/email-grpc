@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"context"
+	"html/template"
 	"google.golang.org/grpc"
 	pb "emailservice/pivotstudio/email"
 	"log"
@@ -22,8 +24,20 @@ func main() {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	r, err := c.SendEmail(ctx, &pb.SendEmailInfo{ReceiveEmail: "1743432766@qq.com",Title: "GRPC practice",
-		Content:"TIhs is a email sent by grpc server",Cc: "1720648723@qq.com"})
+
+
+	t, err := template.ParseFiles("reset_email.html")
+
+	if err != nil {
+		log.Panic(err)
+	}
+	buffer := new(bytes.Buffer)
+	var data interface{}
+	if err = t.Execute(buffer, data); err != nil {
+		log.Panic(err)
+	}
+	r, err := c.SendEmail(ctx, &pb.SendEmailInfo{ReceiveEmail: "xieyuschen@gmail.com",Title: "GRPC practice",
+		Content:buffer.String()})
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}

@@ -2,8 +2,8 @@ package main
 
 import (
 	"context"
+	"emailservice/conf"
 	pb "emailservice/pivotstudio/email"
-	"github.com/Pivot-Studio/Authorization-Template/pkg/ATutil"
 	"google.golang.org/grpc"
 	"gopkg.in/gomail.v2"
 	"log"
@@ -18,18 +18,20 @@ const (
 type server struct {
 	pb.UnimplementedEmailServiceServer
 }
-var email_host,email_from,email_from_password string
+var emailHost, emailFrom, emailFromPassword string
+var emailPort int
 func init(){
-	config:=ATutil.ReadSettingsFromFile("Config.json")
-	email_host= config.EmailSenderSettings.Servername
-	email_from=config.EmailSenderSettings.Email
-	email_from_password=config.EmailSenderSettings.Password
+	config:=conf.ReadSettingsFromFile("Config.json")
+	emailHost = config.EmailSenderSettings.Servername
+	emailFrom =config.EmailSenderSettings.Email
+	emailFromPassword =config.EmailSenderSettings.Password
+	emailPort=config.EmailSenderSettings.Port
 }
 
 func sentEmail(email_to string,cc string, title string,content string)(err error){
 	m := gomail.NewMessage()
 	// 发邮件的地址
-	m.SetHeader("From", email_from)
+	m.SetHeader("From", emailFrom)
 	// 给谁发送，支持多个账号
 	m.SetHeader("To", email_to)
 	// 抄送谁
@@ -43,7 +45,7 @@ func sentEmail(email_to string,cc string, title string,content string)(err error
 	// 附件
 	//m.Attach("/home/Alex/lolcat.jpg")
 	// stmp服务，端口号，发送邮件账号，发送账号密码
-	d := gomail.NewDialer(email_host,25,email_from,email_from_password)
+	d := gomail.NewDialer(emailHost,emailPort, emailFrom, emailFromPassword)
 	// Send the email to Bob, Cora and Dan.
 	if err = d.DialAndSend(m); err != nil {
 		return err

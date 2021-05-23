@@ -3,7 +3,6 @@ module emailservice
 go 1.15
 
 require (
-	github.com/Pivot-Studio/Authorization-Template v0.0.0-20201227164557-574c6f21f521
 	github.com/golang/protobuf v1.4.2
 	google.golang.org/grpc v1.35.0
 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.1.0 // indirect

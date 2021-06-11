@@ -11,7 +11,7 @@ git clone https://github.com/Pivot-Studio/email-grpc.git
 #here you are in blabla/email-grpc
 cd server
 ```
-- Add a `Config.json` to store email Settings
+- Add a `Config.json` to store email Settings  
 Create a `Config.json` file at `email-grpc/server` like this:
 ```json
 {
@@ -29,7 +29,7 @@ go run main.go
 ```
 
 ## Start Client
-- cd client
+- cd client  
 Here I assume you're in path `email-grpc`
 ```shell script
 cd client

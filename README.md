@@ -36,6 +36,6 @@ cd client
 ```
 - run client
 ```shell script
-go run main.go
+go run main.go -addr localhost:xxxx -email yourtestemail
 ```
  Done all of them,your server will be called to send a email to you from you client by gRPC.

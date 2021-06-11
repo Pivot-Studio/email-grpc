@@ -12,11 +12,12 @@ type EmailSenderSettings struct {
 	Email      string `json:"email"`
 	Password   string `json:"password"`
 	Servername string `json:"servername"`
-	Port int `json:"port"`
+	Port       int    `json:"port"`
 }
 type Config struct {
 	EmailSenderSettings EmailSenderSettings `json:"EmailSenderSettings"`
 }
+
 func ReadSettingsFromFile(settingFilePath string) (config Config) {
 	jsonFile, err := os.Open(settingFilePath)
 	if err != nil {
@@ -24,9 +25,10 @@ func ReadSettingsFromFile(settingFilePath string) (config Config) {
 	}
 	defer jsonFile.Close()
 	byteValue, _ := ioutil.ReadAll(jsonFile)
+	fmt.Println(byteValue)
 	err = json.Unmarshal(byteValue, &config)
 	if err != nil {
-		fmt.Println(err.Error(),"=======================")
+		fmt.Println(err.Error(), "=======================")
 		log.Panic(err)
 	}
 	return

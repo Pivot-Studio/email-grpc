@@ -18,11 +18,12 @@ Create a `Config.json` file at `email-grpc/server` like this:
   "EmailSenderSettings":{
     "email":"youremail@your-email.com",
     "password":"your email token,replace it",
-    "servername":"your email host"
+    "servername":"your email host",
+    "port":"your port"
   }
 }
 ```
-> Port 465 is default port
+> Port 465 is default port,so you can ignore port option in json file
 - run server
 ```shell script
 go run main.go

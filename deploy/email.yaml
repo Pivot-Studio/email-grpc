@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: email-grpc
+  namespace: hole
+  labels:
+    app: email-grpc
+spec:
+  selector:
+    matchLabels:
+      app: email-grpc
+  template:
+    metadata:
+      labels:
+        app: email-grpc
+    spec:
+      containers:
+      - name: email-grpc
+        volumeMounts:
+        - name: email-config
+          mountPath: /Config.json
+          subPath: Config.json
+        image: registry.cn-hangzhou.aliyuncs.com/pivotstudio/email-grpc:latest
+        ports:
+        - containerPort: 8000
+          name: http
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 100m
+            memory: 256Mi
+      volumes:
+        - name: email-config
+          configMap:
+            name: email-config
+        
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: email-grpc
+  namespace: hole
+  labels:
+    app: email-grpc
+spec:
+  selector:
+    app: email-grpc
+  type: ClusterIP
+  ports:
+    - name: web
+      port: 8000
+      targetPort: http

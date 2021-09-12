@@ -22,7 +22,7 @@ spec:
           subPath: Config.json
         image: registry.cn-hangzhou.aliyuncs.com/pivotstudio/email-grpc:latest
         ports:
-        - containerPort: 8000
+        - containerPort: 50051
           name: http
         resources:
           requests:
@@ -50,5 +50,5 @@ spec:
   type: ClusterIP
   ports:
     - name: web
-      port: 8000
+      port: 50051
       targetPort: http

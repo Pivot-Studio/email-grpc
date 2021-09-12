@@ -21,3 +21,5 @@ server/Config.json
 
 *.pem
 vendor/
+
+deploy/email-cm.yaml

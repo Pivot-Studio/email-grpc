@@ -19,7 +19,7 @@ steps:
       ref:
         include:
         - refs/pull/**
-  - name: go test
+  - name: go test & build
     image: golang
     commands:
     - echo "<h2><a target=\"_blank\" href=\"$DRONE_SYSTEM_PROTO://$DRONE_SYSTEM_HOST/$DRONE_REPO/$DRONE_BUILD_NUMBER/\">CI Failed❌❌❌</a></h2>\n  \nclick the link above for details  \n">/cov/coverage.txt
@@ -27,6 +27,7 @@ steps:
     - go env -w GOPROXY=https://goproxy.cn,direct
     - go test ./...  -covermode=atomic>/cov/log.txt
     - go build ./...
+    - go build -o app -v server/main.go
     - echo "<h2><a target=\"_blank\" href=\"$DRONE_SYSTEM_PROTO://$DRONE_SYSTEM_HOST/$DRONE_REPO/$DRONE_BUILD_NUMBER/\">CI Success✔️✔️✔️</a></h2>\n  \n<h3>coverages</h3>  \n">/cov/coverage.txt
     - cat /cov/log.txt|{ grep e || true; }>>/cov/coverage.txt
     volumes:
@@ -43,7 +44,7 @@ steps:
       message_file: /cov/coverage.txt
       update: true
     depends_on:
-      - "go test"
+      - "go test & build"
     volumes:
     - name: cov
       path: /cov
@@ -60,7 +61,7 @@ steps:
     - name: cov
       path: /cov
     depends_on:
-      - "go test"
+      - "go test & build"
     when:
       ref:
         include:
@@ -69,6 +70,8 @@ steps:
       - failure
   - name: docker ci
     image: plugins/docker
+    depends_on:
+      - "go test & build"
     settings:
       mtu: 1400
       mirror: https://jtkrmusq.mirror.aliyuncs.com

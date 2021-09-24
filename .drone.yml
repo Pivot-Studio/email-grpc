@@ -71,6 +71,7 @@ steps:
     image: plugins/docker
     settings:
       mtu: 1400
+      mirror: https://jtkrmusq.mirror.aliyuncs.com
       username: 
         from_secret: docker_user_name
       password: 

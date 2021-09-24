@@ -20,7 +20,7 @@ spec:
         - name: email-config
           mountPath: /Config.json
           subPath: Config.json
-        image: registry.cn-hangzhou.aliyuncs.com/pivotstudio/email-grpc:latest
+        image: registry.cn-hangzhou.aliyuncs.com/pivotstudio/email-grpc:{{.build_tag}}
         ports:
         - containerPort: 50051
           name: http

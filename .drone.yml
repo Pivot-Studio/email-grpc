@@ -1,0 +1,109 @@
+kind: pipeline
+type: kubernetes
+name: hole-email
+
+trigger:
+  event:
+  - push
+  - pull_request
+  - tag
+  - promote
+  - rollback
+steps:
+  - name: start comment
+    image: jmccann/drone-github-comment:1
+    settings:
+      message: <h2><a target="_blank" href="${DRONE_SYSTEM_PROTO}://${DRONE_SYSTEM_HOST}/${DRONE_REPO}/${DRONE_BUILD_NUMBER}/">CI Is Running⌛⌛⌛</a></h2>  <b>click the link above for details </b>
+      update: true
+    when:
+      ref:
+        include:
+        - refs/pull/**
+  - name: go test
+    image: golang
+    commands:
+    - echo "<h2><a target=\"_blank\" href=\"$DRONE_SYSTEM_PROTO://$DRONE_SYSTEM_HOST/$DRONE_REPO/$DRONE_BUILD_NUMBER/\">CI Failed❌❌❌</a></h2>\n  \nclick the link above for details  \n">/cov/coverage.txt
+    - go env -w GO111MODULE=on
+    - go env -w GOPROXY=https://goproxy.cn,direct
+    - go test ./...  -covermode=atomic>/cov/log.txt
+    - go build
+    - echo "<h2><a target=\"_blank\" href=\"$DRONE_SYSTEM_PROTO://$DRONE_SYSTEM_HOST/$DRONE_REPO/$DRONE_BUILD_NUMBER/\">CI Success✔️✔️✔️</a></h2>\n  \n<h3>coverages</h3>  \n">/cov/coverage.txt
+    - cat /cov/log.txt|grep ok>>/cov/coverage.txt
+    volumes:
+    - name: cov
+      path: /cov
+    when:
+      ref:
+        include:
+        - refs/pull/**
+  - name: comment
+    image: jmccann/drone-github-comment:1
+    settings:
+      message_file: /cov/coverage.txt
+      update: true
+    depends_on:
+      - "go test"
+    volumes:
+    - name: cov
+      path: /cov
+    when:
+      ref:
+        include:
+        - refs/pull/**
+  - name: failed comment
+    image: jmccann/drone-github-comment:1
+    settings:
+      message_file: /cov/coverage.txt
+      update: true
+    volumes:
+    - name: cov
+      path: /cov
+    depends_on:
+      - "go test"
+    when:
+      ref:
+        include:
+        - refs/pull/**
+      status:
+      - failure
+  - name: docker ci
+    image: plugins/docker
+    settings:
+      mtu: 1400
+      username: 
+        from_secret: docker_user_name
+      password: 
+        from_secret: docker_pass
+      repo: registry.cn-hangzhou.aliyuncs.com/pivotstudio/email-grpc
+      registry: registry.cn-hangzhou.aliyuncs.com
+      cache_from: registry.cn-hangzhou.aliyuncs.com/pivotstudio/email-grpc:latest
+      tags:
+        - latest
+        - build-${DRONE_BUILD_NUMBER} 
+    when:
+      event:
+      - tag
+      - promote
+  - name: deploy
+    image: bh90210/dron8s:latest
+    settings:
+      yaml: ./deploy/email.yaml
+      build_tag: build-${DRONE_BUILD_NUMBER}
+    depends_on:
+      - "docker ci"
+    when:
+      event:
+      - tag
+      - promote
+  - name: rollback
+    image: bh90210/dron8s:latest
+    settings:
+      yaml: ./deploy/email.yaml
+      build_tag: build-${VERSION}
+    when:
+      event: 
+      - rollback
+
+volumes:
+- name: cov
+  temp: {}

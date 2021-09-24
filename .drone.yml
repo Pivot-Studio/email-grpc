@@ -36,7 +36,7 @@ steps:
       ref:
         include:
         - refs/pull/**
-        - refs/heads/master
+        - refs/heads/main
   - name: comment
     image: jmccann/drone-github-comment:1
     settings:

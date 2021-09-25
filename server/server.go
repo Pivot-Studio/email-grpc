@@ -24,12 +24,12 @@ func init() {
 	emailPort = config.EmailSenderSettings.Port
 }
 
-func sentEmail(email_to string, cc string, title string, content string) (err error) {
+func sentEmail(emailTo string, cc string, title string, content string) (err error) {
 	m := gomail.NewMessage()
 	// 发邮件的地址
 	m.SetHeader("From", emailFrom)
 	// 给谁发送，支持多个账号
-	m.SetHeader("To", email_to)
+	m.SetHeader("To", emailTo)
 	// 抄送谁
 	if len(cc) > 0 {
 		m.SetAddressHeader("Cc", cc, "Dan")
@@ -53,7 +53,7 @@ func sentEmail(email_to string, cc string, title string, content string) (err er
 			"Host": emailHost,
 			"Port": emailPort,
 			"From": emailFrom,
-			"To":   email_to,
+			"To":   emailTo,
 		}).Info()
 		return nil
 	}

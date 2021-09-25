@@ -25,7 +25,6 @@ func ReadSettingsFromFile(settingFilePath string) (config Config) {
 	}
 	defer jsonFile.Close()
 	byteValue, _ := ioutil.ReadAll(jsonFile)
-	fmt.Println(byteValue)
 	err = json.Unmarshal(byteValue, &config)
 	if err != nil {
 		fmt.Println(err.Error(), "=======================")

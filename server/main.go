@@ -9,13 +9,12 @@ import (
 	"gopkg.in/gomail.v2"
 	"net"
 )
-
 const (
 	port = ":50051"
 )
 
-// server is used to implement helloworld.GreeterServer.
-type server struct {
+// Server is used to implement helloworld.GreeterServer.
+type Server struct {
 	pb.UnimplementedEmailServiceServer
 }
 
@@ -30,12 +29,12 @@ func init() {
 	emailPort = config.EmailSenderSettings.Port
 }
 
-func sentEmail(email_to string, cc string, title string, content string) (err error) {
+func sentEmail(emailTo string, cc string, title string, content string) (err error) {
 	m := gomail.NewMessage()
 	// 发邮件的地址
 	m.SetHeader("From", emailFrom)
 	// 给谁发送，支持多个账号
-	m.SetHeader("To", email_to)
+	m.SetHeader("To", emailTo)
 	// 抄送谁
 	if len(cc) > 0 {
 		m.SetAddressHeader("Cc", cc, "Dan")
@@ -59,14 +58,14 @@ func sentEmail(email_to string, cc string, title string, content string) (err er
 			"Host": emailHost,
 			"Port": emailPort,
 			"From": emailFrom,
-			"To":   email_to,
+			"To":   emailTo,
 		}).Info()
 		return nil
 	}
 }
 
 // SendEmail implements helloworld.GreeterServer
-func (s *server) SendEmail(ctx context.Context, in *pb.SendEmailInfo) (*pb.ResponseInfo, error) {
+func (s *Server) SendEmail(ctx context.Context, in *pb.SendEmailInfo) (*pb.ResponseInfo, error) {
 	err := sentEmail(in.ReceiveEmail, in.Cc, in.Title, in.Content)
 	if err != nil {
 		logrus.Log.WithFields(map[string]interface{}{
@@ -91,11 +90,11 @@ func main() {
 		//log.Fatalf("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
-	pb.RegisterEmailServiceServer(s, &server{})
+	pb.RegisterEmailServiceServer(s, &Server{})
 	if err := s.Serve(lis); err != nil {
 		logrus.Log.WithFields(map[string]interface{}{
 			"serve error": err,
 		})
-		//log.Fatalf("failed to serve: %v", err)
 	}
 }
+

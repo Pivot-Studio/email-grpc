@@ -68,7 +68,7 @@ steps:
       status:
       - failure
   - name: cd test & build
-    image: golang
+    image: golang:alpine
     commands:
     - go env -w GO111MODULE=on
     - go env -w GOPROXY=https://goproxy.cn,direct

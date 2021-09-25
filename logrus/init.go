@@ -19,12 +19,9 @@ func init() {
 		fmt.Println("err :", err)
 	}
 	Log = logrus.New()
-
 	Log.Out = src
-
 	// 设置输出的等级
 	Log.SetLevel(logrus.InfoLevel)
-
 	// 重定向输出文件
 	logWriter, _ := rotate.New(
 		// 加输出的时间
@@ -32,7 +29,6 @@ func init() {
 		rotate.WithMaxAge(7*24*time.Hour),
 		rotate.WithRotationTime(24*time.Hour),
 	)
-
 	writeMap := lfshook.WriterMap{
 		logrus.InfoLevel:  logWriter,
 		logrus.FatalLevel: logWriter,

@@ -1,21 +1,15 @@
-package main
+package server
 
 import (
 	"context"
 	"emailservice/conf"
 	"emailservice/logrus"
 	pb "emailservice/pivotstudio/email"
-	"google.golang.org/grpc"
 	"gopkg.in/gomail.v2"
-	"net"
 )
 
-const (
-	port = ":50051"
-)
-
-// server is used to implement helloworld.GreeterServer.
-type server struct {
+// Server is used to implement helloworld.GreeterServer.
+type Server struct {
 	pb.UnimplementedEmailServiceServer
 }
 
@@ -66,7 +60,7 @@ func sentEmail(email_to string, cc string, title string, content string) (err er
 }
 
 // SendEmail implements helloworld.GreeterServer
-func (s *server) SendEmail(ctx context.Context, in *pb.SendEmailInfo) (*pb.ResponseInfo, error) {
+func (s *Server) SendEmail(ctx context.Context, in *pb.SendEmailInfo) (*pb.ResponseInfo, error) {
 	err := sentEmail(in.ReceiveEmail, in.Cc, in.Title, in.Content)
 	if err != nil {
 		logrus.Log.WithFields(map[string]interface{}{
@@ -79,23 +73,5 @@ func (s *server) SendEmail(ctx context.Context, in *pb.SendEmailInfo) (*pb.Respo
 			"statuscode": 200,
 		}).Info()
 		return &pb.ResponseInfo{StatuCode: 200, Message: "Send email successfully"}, nil
-	}
-}
-
-func main() {
-	lis, err := net.Listen("tcp", port)
-	if err != nil {
-		logrus.Log.WithFields(map[string]interface{}{
-			"Listening error": err,
-		}).Fatal()
-		//log.Fatalf("failed to listen: %v", err)
-	}
-	s := grpc.NewServer()
-	pb.RegisterEmailServiceServer(s, &server{})
-	if err := s.Serve(lis); err != nil {
-		logrus.Log.WithFields(map[string]interface{}{
-			"serve error": err,
-		})
-		//log.Fatalf("failed to serve: %v", err)
 	}
 }

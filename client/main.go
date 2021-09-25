@@ -25,12 +25,6 @@ func main() {
 
 	// Set up a connection to the server.
 	conn, err := grpc.Dial(*address, grpc.WithInsecure(), grpc.WithBlock())
-	if err != nil {
-		logrus.Log.WithFields(map[string]interface{}{
-			"connect error": err,
-		}).Fatal()
-		//log.Fatalf("did not connect: %v", err)
-	}
 	defer conn.Close()
 	c := pb.NewEmailServiceClient(conn)
 

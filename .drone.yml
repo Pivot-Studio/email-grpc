@@ -27,7 +27,6 @@ steps:
     - go env -w GOPROXY=https://goproxy.cn,direct
     - go test ./...  -covermode=atomic>/cov/log.txt
     - go build ./...
-    - go build -o app -v server/main.go
     - echo "<h2><a target=\"_blank\" href=\"$DRONE_SYSTEM_PROTO://$DRONE_SYSTEM_HOST/$DRONE_REPO/$DRONE_BUILD_NUMBER/\">CI Success✔️✔️✔️</a></h2>\n  \n<h3>coverages</h3>  \n">/cov/coverage.txt
     - cat /cov/log.txt|{ grep ok || true; }>>/cov/coverage.txt
     volumes:
@@ -68,10 +67,22 @@ steps:
         - refs/pull/**
       status:
       - failure
+  - name: cd test & build
+    image: golang
+    commands:
+    - go env -w GO111MODULE=on
+    - go env -w GOPROXY=https://goproxy.cn,direct
+    - go test ./...  -covermode=atomic
+    - go build ./...
+    - go build -o app -v server/main.go
+    when:
+      event:
+      - tag
+      - promote
   - name: docker ci
     image: plugins/docker
     depends_on:
-      - "go test & build"
+      - "cd test & build"
     settings:
       mtu: 1400
       mirror: https://jtkrmusq.mirror.aliyuncs.com

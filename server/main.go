@@ -1,11 +1,16 @@
-package server
+package main
 
 import (
 	"context"
 	"emailservice/conf"
 	"emailservice/logrus"
 	pb "emailservice/pivotstudio/email"
+	"google.golang.org/grpc"
 	"gopkg.in/gomail.v2"
+	"net"
+)
+const (
+	port = ":50051"
 )
 
 // Server is used to implement helloworld.GreeterServer.
@@ -75,3 +80,21 @@ func (s *Server) SendEmail(ctx context.Context, in *pb.SendEmailInfo) (*pb.Respo
 		return &pb.ResponseInfo{StatuCode: 200, Message: "Send email successfully"}, nil
 	}
 }
+
+func main() {
+	lis, err := net.Listen("tcp", port)
+	if err != nil {
+		logrus.Log.WithFields(map[string]interface{}{
+			"Listening error": err,
+		}).Fatal()
+		//log.Fatalf("failed to listen: %v", err)
+	}
+	s := grpc.NewServer()
+	pb.RegisterEmailServiceServer(s, &Server{})
+	if err := s.Serve(lis); err != nil {
+		logrus.Log.WithFields(map[string]interface{}{
+			"serve error": err,
+		})
+	}
+}
+

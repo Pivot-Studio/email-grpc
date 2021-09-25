@@ -29,7 +29,7 @@ steps:
     - go build ./...
     - go build -o app -v server/main.go
     - echo "<h2><a target=\"_blank\" href=\"$DRONE_SYSTEM_PROTO://$DRONE_SYSTEM_HOST/$DRONE_REPO/$DRONE_BUILD_NUMBER/\">CI Success✔️✔️✔️</a></h2>\n  \n<h3>coverages</h3>  \n">/cov/coverage.txt
-    - cat /cov/log.txt|{ grep e || true; }>>/cov/coverage.txt
+    - cat /cov/log.txt|{ grep ok || true; }>>/cov/coverage.txt
     volumes:
     - name: cov
       path: /cov
